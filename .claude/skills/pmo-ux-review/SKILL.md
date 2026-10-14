@@ -35,7 +35,7 @@ flag it as a finding.
 | Brand tint | `--c-brand-100` | `#e4eefa` | Light button hover, tag border |
 | Brand wash | `--c-brand-50` | `#f3f7fd` | Tag background, ghost hover, modal header, move menu |
 | Page background | `--c-bg` | `#eef2f7` | `body` |
-| Column background | — | `#e3e9f1` | Board columns |
+| Column background | `--c-column` | `#e3e9f1` | Board columns |
 | Surface | `--c-surface` | `#ffffff` | Cards, filter bar, modal, tabs |
 | Border | `--c-border` | `#d4dce7` | Cards, inputs, ghost buttons |
 | Drop target | `--c-drop` | `#d6e6fb` | Column while a card is dragged over it |
@@ -46,7 +46,7 @@ flag it as a finding.
 |---|---|---|---|
 | Primary text | `--c-text` | `#1b2533` | 13.7:1 on page bg |
 | Muted text | `--c-text-muted` | `#5a6778` | 5.8:1 on white, 4.7:1 on column bg (the lowest allowed) |
-| Text on dark header | — | `#ffffff` | Secondary header text may drop to 80–85% opacity, no lower |
+| Text on dark | `--c-on-dark` | `#ffffff` | Secondary header text may drop to 80–85% opacity, no lower |
 
 ### Accents and feedback
 
@@ -79,16 +79,22 @@ any status except Done.
 
 | Status | Text / accent | Background | Contrast | Icon |
 |---|---|---|---|---|
-| Backlog | `#555f6d` | `#eef0f3` | 5.7:1 | ○ |
-| In Progress | `#1a56a0` | `#e4eefa` | 6.2:1 | ◐ |
-| Blocked | `#6a3fa0` | `#f1ebfa` | 6.4:1 | ⛔ |
-| Done | `#186a3b` | `#e6f4ec` | 5.9:1 | ✓ |
-| Overdue | `#c62828` | `#fdecec` (border `#f5c2c2`) | 4.9:1 | ⚠ |
+| Backlog | `#555f6d` `--c-status-backlog` | `#eef0f3` `--c-status-backlog-bg` | 5.7:1 | Empty circle |
+| In Progress | `#1a56a0` `--c-status-progress` | `#e4eefa` `--c-status-progress-bg` | 6.2:1 | Half-filled circle |
+| Blocked | `#6a3fa0` `--c-status-blocked` | `#f1ebfa` `--c-status-blocked-bg` | 6.4:1 | Circle with a bar (no entry) |
+| Done | `#186a3b` `--c-status-done` | `#e6f4ec` `--c-status-done-bg` | 5.9:1 | Circle with a tick |
+| Overdue | `#c62828` `--c-critical` | `#fdecec` `--c-critical-bg`, border `#f5c2c2` `--c-critical-border` | 4.9:1 | Warning triangle |
 
+Where status colour appears: a 4px top border on each column, the column-heading
+icon, the move-menu option icons, and the 3px underline and icon on phone tabs.
+In code, `[data-status="…"]` sets `--status` / `--status-bg`; use those rather
+than naming the status token directly.
+
+Icons are the inline SVGs from `icon()` in `index.html`: 16×16 viewBox,
+1.8px strokes in `currentColor`, 14px (12px inside pills and tabs),
+`aria-hidden="true"`. Never use emoji, because their colour can't be controlled.
 Status is always labelled with text (or an icon plus visually-hidden text).
-Overdue cards also get a `#fffafa` card tint. Backlog, In Progress, Blocked
-and Done are not yet defined as tokens in `index.html`. Add them as
-`--c-status-*` variables before using them.
+Overdue cards also get a `#fffafa` (`--c-critical-tint`) card tint.
 
 ## Typography
 

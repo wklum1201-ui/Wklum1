@@ -17,7 +17,9 @@
   --c-brand-50:  #f3f7fd;
 
   --c-bg: #eef2f7;
+  --c-column: #e3e9f1;
   --c-surface: #ffffff;
+  --c-on-dark: #ffffff;
   --c-border: #d4dce7;
   --c-text: #1b2533;
   --c-text-muted: #5a6778;
@@ -30,6 +32,14 @@
   --c-medium-bg: #e4eefa;
   --c-low: #555f6d;
   --c-low-bg: #eef0f3;
+  --c-critical-border: #f5c2c2;
+  --c-critical-tint: #fffafa;
+
+  /* Status colours (text/accent + tint); Overdue reuses the critical set */
+  --c-status-backlog: #555f6d;   --c-status-backlog-bg: #eef0f3;
+  --c-status-progress: #1a56a0;  --c-status-progress-bg: #e4eefa;
+  --c-status-blocked: #6a3fa0;   --c-status-blocked-bg: #f1ebfa;
+  --c-status-done: #186a3b;      --c-status-done-bg: #e6f4ec;
 
   --c-success: #1e7d45;
   --c-warning: #a35b00;
@@ -85,7 +95,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
    ========================================================= */
 .app-header {
   background: linear-gradient(90deg, var(--c-brand-900), var(--c-brand-700));
-  color: #fff;
+  color: var(--c-on-dark);
   padding: var(--space-4) var(--space-5);
 }
 .header-top {
@@ -101,10 +111,10 @@ button, input, select, textarea { font: inherit; color: inherit; }
   border: 1px solid transparent; border-radius: var(--radius-sm);
   min-height: var(--tap); padding: 0 var(--space-4); cursor: pointer; font-weight: 600;
 }
-.btn-primary { background: var(--c-brand-500); color: #fff; }
+.btn-primary { background: var(--c-brand-500); color: var(--c-on-dark); }
 .btn-primary:hover { background: var(--c-brand-600); }
 .btn-primary[disabled] { opacity: 0.6; cursor: progress; }
-.btn-light { background: #fff; color: var(--c-brand-900); }
+.btn-light { background: var(--c-surface); color: var(--c-brand-900); }
 .btn-light:hover { background: var(--c-brand-100); }
 .btn-light[data-sending]::after { content: "Sending…"; font-weight: 400; font-size: 12px; color: var(--c-text-muted); }
 .btn-ghost { background: transparent; border-color: var(--c-border); color: var(--c-text); }
@@ -121,13 +131,13 @@ button, input, select, textarea { font: inherit; color: inherit; }
   padding: var(--space-2) var(--space-3);
   min-width: 96px;
 }
-.summary .label { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; opacity: 0.85; }
+.summary .label { display: flex; align-items: center; gap: var(--space-1); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; opacity: 0.85; }
 .summary .value { font-size: 20px; font-weight: 700; }
 .summary .is-alert { background: rgba(198, 40, 40, 0.35); border-color: rgba(255, 180, 180, 0.5); }
 .summary li.has-btn { padding: 0; }
 .summary-btn {
   display: block; width: 100%; height: 100%; min-height: var(--tap); text-align: left;
-  background: transparent; border: 0; border-radius: var(--radius-md); color: #fff;
+  background: transparent; border: 0; border-radius: var(--radius-md); color: var(--c-on-dark);
   padding: var(--space-2) var(--space-3); cursor: pointer;
 }
 .summary-btn:hover { background: rgba(255, 255, 255, 0.1); }
@@ -150,7 +160,7 @@ main { padding: var(--space-4) var(--space-5) var(--space-6); }
 .field label { font-size: 12px; font-weight: 600; color: var(--c-text-muted); }
 .field input, .field select, .field textarea {
   border: 1px solid var(--c-border); border-radius: var(--radius-sm);
-  min-height: var(--tap); padding: 6px var(--space-2); background: #fff; min-width: 160px;
+  min-height: var(--tap); padding: 6px var(--space-2); background: var(--c-surface); min-width: 160px;
 }
 .field textarea { resize: vertical; min-height: 72px; }
 .filter-count { margin-left: auto; font-size: 12px; color: var(--c-text-muted); align-self: center; }
@@ -163,7 +173,8 @@ main { padding: var(--space-4) var(--space-5) var(--space-6); }
   gap: var(--space-4); align-items: start;
 }
 .column {
-  background: #e3e9f1; border: 2px solid transparent;
+  background: var(--c-column); border: 2px solid transparent;
+  border-top: 4px solid var(--status, transparent);
   border-radius: var(--radius-lg); padding: var(--space-3);
   min-height: 240px; transition: background 0.15s, border-color 0.15s;
 }
@@ -174,10 +185,19 @@ main { padding: var(--space-4) var(--space-5) var(--space-6); }
 }
 .column-header h2 { margin: 0; font-size: 15px; }
 .column-header .hint { display: block; font-size: 11px; color: var(--c-text-muted); font-weight: 400; }
-.col-alert { display: inline-block; margin-top: 2px; font-size: 11px; font-weight: 700; color: var(--c-critical); }
+.col-alert { display: inline-flex; align-items: center; gap: var(--space-1); margin-top: 2px; font-size: 11px; font-weight: 700; color: var(--c-critical); }
 .board-tabs { display: none; }
+[data-status="Backlog"]     { --status: var(--c-status-backlog);  --status-bg: var(--c-status-backlog-bg); }
+[data-status="In Progress"] { --status: var(--c-status-progress); --status-bg: var(--c-status-progress-bg); }
+[data-status="Blocked"]     { --status: var(--c-status-blocked);  --status-bg: var(--c-status-blocked-bg); }
+[data-status="Done"]        { --status: var(--c-status-done);     --status-bg: var(--c-status-done-bg); }
+.icon { flex: none; width: 14px; height: 14px; vertical-align: -2px; }
+.column-header h2 > .icon { color: var(--status); margin-right: var(--space-1); }
+.pill .icon, .overdue .icon, .col-alert .icon { width: 12px; height: 12px; }
+.column-header h2 { display: flex; flex-wrap: wrap; align-items: center; }
+.column-header .hint, .column-header .col-alert { flex-basis: 100%; }
 .count-badge {
-  background: var(--c-brand-700); color: #fff; border-radius: 999px;
+  background: var(--c-brand-700); color: var(--c-on-dark); border-radius: 999px;
   min-width: 26px; padding: 2px var(--space-2); text-align: center; font-size: 12px; font-weight: 700;
 }
 .card-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-3); }
@@ -198,8 +218,8 @@ main { padding: var(--space-4) var(--space-5) var(--space-6); }
 .card[data-priority="Medium"]   { border-left-color: var(--c-medium); }
 .card[data-priority="Low"]      { border-left-color: var(--c-low); }
 
-.card.is-overdue { background: #fffafa; }
-.card-top { display: flex; align-items: center; gap: var(--space-2); padding-right: 36px; flex-wrap: wrap; }
+.card.is-overdue { background: var(--c-critical-tint); }
+.card-top { display: flex; align-items: center; gap: var(--space-2); padding-right: calc(var(--tap) - var(--space-2)); flex-wrap: wrap; }
 .task-id { font-family: var(--font-mono); font-size: 11px; color: var(--c-text-muted); }
 .card-title { margin: var(--space-3) 0 var(--space-1); font-size: 14px; font-weight: 700; word-wrap: break-word; }
 .card-desc { margin: 0 0 var(--space-2); font-size: 12px; color: var(--c-text-muted); word-wrap: break-word; }
@@ -211,7 +231,7 @@ main { padding: var(--space-4) var(--space-5) var(--space-6); }
 .card-foot { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); margin-top: var(--space-2); flex-wrap: wrap; }
 
 .pill, .tag, .overdue {
-  display: inline-block; border-radius: 999px; padding: 1px var(--space-2);
+  display: inline-flex; align-items: center; gap: 2px; border-radius: 999px; padding: 1px var(--space-2);
   font-size: 11px; font-weight: 700; white-space: nowrap;
 }
 .pill-Critical { background: var(--c-critical-bg); color: var(--c-critical); }
@@ -219,7 +239,7 @@ main { padding: var(--space-4) var(--space-5) var(--space-6); }
 .pill-Medium   { background: var(--c-medium-bg); color: var(--c-medium); }
 .pill-Low      { background: var(--c-low-bg); color: var(--c-low); }
 .tag { background: var(--c-brand-50); color: var(--c-brand-700); border: 1px solid var(--c-brand-100); font-weight: 600; }
-.overdue { background: var(--c-critical-bg); color: var(--c-critical); border: 1px solid #f5c2c2; }
+.overdue { background: var(--c-critical-bg); color: var(--c-critical); border: 1px solid var(--c-critical-border); }
 
 .icon-btn {
   border: 0; background: transparent; cursor: pointer; border-radius: var(--radius-sm);
@@ -242,18 +262,20 @@ main { padding: var(--space-4) var(--space-5) var(--space-6); }
 }
 .move-menu .menu-label { width: 100%; font-size: 11px; color: var(--c-text-muted); }
 .move-menu button {
-  border: 1px solid var(--c-brand-100); background: #fff; border-radius: var(--radius-sm);
+  border: 1px solid var(--c-brand-100); background: var(--c-surface); border-radius: var(--radius-sm);
   min-height: var(--tap); min-width: var(--tap); padding: 0 var(--space-3); font-size: 12px; cursor: pointer;
 }
 .move-menu button:hover { background: var(--c-brand-100); }
+.move-menu button[data-status] { display: inline-flex; align-items: center; gap: var(--space-1); }
+.move-menu button[data-status] .icon { color: var(--status); }
 
 .confirm {
   display: flex; align-items: center; gap: var(--space-2); margin-top: var(--space-2);
   padding: var(--space-2); background: var(--c-critical-bg); border-radius: var(--radius-sm);
   font-size: 12px; font-weight: 600; color: var(--c-critical);
 }
-.confirm button { border: 1px solid currentColor; background: #fff; border-radius: var(--radius-sm); min-height: var(--tap); min-width: var(--tap); padding: 0 var(--space-3); cursor: pointer; font-size: 12px; font-weight: 700; }
-.confirm .yes { background: var(--c-critical); color: #fff; border-color: var(--c-critical); }
+.confirm button { border: 1px solid currentColor; background: var(--c-surface); border-radius: var(--radius-sm); min-height: var(--tap); min-width: var(--tap); padding: 0 var(--space-3); cursor: pointer; font-size: 12px; font-weight: 700; }
+.confirm .yes { background: var(--c-critical); color: var(--c-on-dark); border-color: var(--c-critical); }
 
 /* =========================================================
    Add Task modal (native <dialog>)
@@ -277,7 +299,7 @@ dialog.modal::backdrop { background: rgba(11, 37, 69, 0.5); }
 .form-grid .field input, .form-grid .field select, .form-grid .field textarea { min-width: 0; width: 100%; }
 .req { color: var(--c-critical); }
 .error { color: var(--c-critical); font-size: 12px; min-height: 1em; margin: 0; }
-.field.has-error input, .field.has-error select, .field.has-error textarea { border-color: var(--c-critical); background: #fffafa; }
+.field.has-error input, .field.has-error select, .field.has-error textarea { border-color: var(--c-critical); background: var(--c-critical-tint); }
 .char-count { font-size: 11px; color: var(--c-text-muted); text-align: right; }
 .form-actions { display: flex; justify-content: flex-end; gap: var(--space-2); margin-top: var(--space-4); }
 
@@ -289,7 +311,7 @@ dialog.modal::backdrop { background: rgba(11, 37, 69, 0.5); }
   display: flex; flex-direction: column; gap: var(--space-2); max-width: min(380px, calc(100vw - 32px));
 }
 .toast {
-  background: var(--c-brand-900); color: #fff; border-left: 5px solid var(--c-success);
+  background: var(--c-brand-900); color: var(--c-on-dark); border-left: 5px solid var(--c-success);
   border-radius: var(--radius-md); padding: var(--space-3) var(--space-4);
   box-shadow: var(--shadow-modal); font-weight: 500;
 }
@@ -298,7 +320,7 @@ dialog.modal::backdrop { background: rgba(11, 37, 69, 0.5); }
 .toast { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
 .toast-action {
   flex: none; min-height: var(--tap); padding: 0 var(--space-3); border-radius: var(--radius-sm);
-  border: 1px solid rgba(255, 255, 255, 0.6); background: transparent; color: #fff; font-weight: 700; cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.6); background: transparent; color: var(--c-on-dark); font-weight: 700; cursor: pointer;
 }
 .toast-action:hover { background: rgba(255, 255, 255, 0.15); }
 
@@ -321,11 +343,16 @@ dialog.modal::backdrop { background: rgba(11, 37, 69, 0.5); }
     border: 1px solid var(--c-border); border-radius: var(--radius-sm); background: var(--c-surface);
     font-size: 12px; font-weight: 600; line-height: 1.2; cursor: pointer;
   }
-  .board-tab .tab-count { font-size: 11px; font-weight: 700; color: var(--c-text-muted); }
+  .board-tab { border-bottom: 3px solid var(--status); }
+  .board-tab .tab-name { white-space: nowrap; }
+  .board-tab .tab-count > .icon { color: var(--status); width: 12px; height: 12px; }
+  .board-tab .tab-count { display: inline-flex; align-items: center; gap: 2px; font-size: 11px; font-weight: 700; color: var(--c-text-muted); }
   .board-tab .tab-alert { color: var(--c-critical); }
-  .board-tab[aria-selected="true"] { background: var(--c-brand-700); border-color: var(--c-brand-700); color: #fff; }
+  .board-tab[aria-selected="true"] { background: var(--c-brand-700); border-color: var(--c-brand-700); color: var(--c-on-dark); }
   .board-tab[aria-selected="true"] .tab-count,
-  .board-tab[aria-selected="true"] .tab-alert { color: #fff; }
+  .board-tab[aria-selected="true"] .tab-alert,
+  .board-tab[aria-selected="true"] .tab-count > .icon { color: var(--c-on-dark); }
+  .board-tab .tab-alert { display: inline-flex; align-items: center; gap: 2px; }
   .board {
     display: flex; position: relative; overflow-x: auto; gap: var(--space-3);
     scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none;
@@ -487,6 +514,19 @@ const CATEGORIES = [
   "Application Development", "Infrastructure", "Cybersecurity", "Data", "Compliance", "Vendor",
 ];
 const PRIORITIES = ["Critical", "High", "Medium", "Low"];
+
+/* Status icons: stroke-only SVG in currentColor so they work on light and dark */
+const ICON_PATHS = {
+  "Backlog":     '<circle cx="8" cy="8" r="5.6"/>',
+  "In Progress": '<circle cx="8" cy="8" r="5.6"/><path d="M8 2.4a5.6 5.6 0 0 1 0 11.2z" fill="currentColor" stroke="none"/>',
+  "Blocked":     '<circle cx="8" cy="8" r="5.6"/><path d="M5 8h6"/>',
+  "Done":        '<circle cx="8" cy="8" r="5.6"/><path d="M5.4 8.2l1.8 1.8 3.4-3.6"/>',
+  "Overdue":     '<path d="M8 2.2l6 10.8H2z"/><path d="M8 6.4v3"/><path d="M8 11.3v.1"/>',
+};
+function icon(name) {
+  return `<svg class="icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"
+    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${ICON_PATHS[name]}</svg>`;
+}
 const ID_PREFIX = "UOB-ITPM-";
 
 /* =========================================================
@@ -607,20 +647,20 @@ function renderSummary() {
   const overdue = tasks.filter(isOverdue).length;
   const items = [
     { label: "Total", value: tasks.length },
-    ...STATUSES.map((s) => ({ label: s.key, value: tasks.filter((t) => t.status === s.key).length })),
+    ...STATUSES.map((s) => ({ label: s.key, icon: s.key, value: tasks.filter((t) => t.status === s.key).length })),
   ];
   const pressed = state.filters.overdueOnly;
   const overdueTile = `
     <li class="has-btn ${overdue > 0 ? "is-alert" : ""}">
       <button type="button" class="summary-btn" id="overdue-toggle" aria-pressed="${pressed}"
               ${overdue === 0 && !pressed ? "disabled" : ""}>
-        <span class="label"><span aria-hidden="true">⚠</span> Overdue</span>
+        <span class="label">${icon("Overdue")} Overdue</span>
         <span class="value">${overdue}</span>
         <span class="hint">${pressed ? "Show all" : "Show only these"}</span>
       </button>
     </li>`;
   document.getElementById("summary").innerHTML = overdueTile + items.map((i) =>
-    `<li><span class="label">${escapeHtml(i.label)}</span><span class="value">${i.value}</span></li>`
+    `<li><span class="label">${i.icon ? icon(i.icon) : ""}${escapeHtml(i.label)}</span><span class="value">${i.value}</span></li>`
   ).join("");
 }
 
@@ -636,7 +676,7 @@ function renderCard(task) {
     <div class="move-menu" role="group" aria-label="Move ${id} to column">
       <span class="menu-label">Move to:</span>
       ${STATUSES.filter((s) => s.key !== task.status).map((s) =>
-        `<button type="button" data-action="move-to" data-id="${id}" data-status="${escapeHtml(s.key)}">${escapeHtml(s.key)}</button>`
+        `<button type="button" data-action="move-to" data-id="${id}" data-status="${escapeHtml(s.key)}">${icon(s.key)}${escapeHtml(s.key)}</button>`
       ).join("")}
       <button type="button" data-action="move-cancel" data-id="${id}">Cancel</button>
     </div>` : "";
@@ -654,7 +694,7 @@ function renderCard(task) {
       <div class="card-top">
         <span class="task-id">${id}</span>
         <span class="pill pill-${escapeHtml(task.priority)}">${escapeHtml(task.priority)}</span>
-        ${overdue ? `<span class="overdue"><span aria-hidden="true">⚠</span> Overdue</span>` : ""}
+        ${overdue ? `<span class="overdue">${icon("Overdue")}Overdue</span>` : ""}
       </div>
       <button type="button" class="icon-btn delete-btn" data-action="delete" data-id="${id}"
               aria-label="Delete task ${id}">×</button>
@@ -690,8 +730,8 @@ function renderBoard(focusSelector) {
     return `
       <section class="column" id="panel-${slug}" data-status="${escapeHtml(key)}" aria-labelledby="${headingId}">
         <div class="column-header">
-          <h2 id="${headingId}">${escapeHtml(key)}<span class="hint">${escapeHtml(hint)}</span>${overdue
-            ? `<span class="col-alert"><span aria-hidden="true">⚠</span> ${overdue} overdue</span>` : ""}</h2>
+          <h2 id="${headingId}">${icon(key)}${escapeHtml(key)}<span class="hint">${escapeHtml(hint)}</span>${overdue
+            ? `<span class="col-alert">${icon("Overdue")}${overdue} overdue</span>` : ""}</h2>
           <span class="count-badge" aria-label="${colTasks.length} tasks">${colTasks.length}</span>
         </div>
         ${colTasks.length
@@ -722,11 +762,11 @@ function renderBoard(focusSelector) {
 function renderTabs(columns) {
   const active = state.ui.activeColumn;
   document.getElementById("board-tabs").innerHTML = columns.map((c, i) => `
-    <button type="button" class="board-tab" role="tab" id="tab-${c.slug}" data-index="${i}"
+    <button type="button" class="board-tab" role="tab" id="tab-${c.slug}" data-index="${i}" data-status="${escapeHtml(c.key)}"
             aria-controls="panel-${c.slug}" aria-selected="${i === active}" tabindex="${i === active ? 0 : -1}">
-      <span>${escapeHtml(c.key)}</span>
-      <span class="tab-count">${c.colTasks.length}${c.overdue
-        ? ` · <span class="tab-alert"><span aria-hidden="true">⚠</span>${c.overdue}<span class="visually-hidden"> overdue</span></span>` : ""}</span>
+      <span class="tab-name">${escapeHtml(c.key)}</span>
+      <span class="tab-count">${icon(c.key)}${c.colTasks.length}${c.overdue
+        ? ` · <span class="tab-alert">${icon("Overdue")}${c.overdue}<span class="visually-hidden"> overdue</span></span>` : ""}</span>
     </button>`).join("");
 }
 
